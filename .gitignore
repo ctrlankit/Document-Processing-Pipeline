@@ -33,7 +33,11 @@ dist/
 *.egg-info/
 
 # Project-generated data
+data/raw/*
+!data/raw/.gitkeep
 data/processed/
-data/vectorstore/
-data/failed/
+data/vectorstore/*
+!data/vectorstore/.gitkeep
+data/failed/*
+!data/failed/.gitkeep
 reports/
