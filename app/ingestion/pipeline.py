@@ -11,6 +11,7 @@ from app.ingestion.loaders.excel_loader import ExcelLoader
 from app.ingestion.chunking.text_chunker import TextChunker
 
 from app.ingestion.embeddings.embedding_service import EmbeddingService
+from app.ingestion.vectorstore.chroma_store import ChromaStore
 
 from app.ingestion.models import ChunkDocument
 import uuid
@@ -77,7 +78,7 @@ class Pipeline:
 
             chunk_doc = ChunkDocument(
 
-                chunk_id=str(uuid.uuid4()),
+                chunk_id=f"{document_hash}_{index}",
 
                 text=chunk,
 
@@ -104,23 +105,34 @@ class Pipeline:
 
         print(f"Generated {len(embeddings)} embeddings")
 
-        # STEP 8 — Print sample output
-        for i, chunk_doc in enumerate(chunk_documents):
+        # STEP 8 — Store embeddings
+        store = ChromaStore()
 
-            print("\n====================")
-            print(f"Chunk {i + 1}")
-            print("====================")
+        store.add_documents(
+            chunk_documents,
+            embeddings
+        )
 
-            print(f"Chunk ID: {chunk_doc.chunk_id}")
+        print(f"Completed processing for file: {file_path}")
 
-            print(f"Source File: {chunk_doc.source_file}")
 
-            print(f"Chunk Index: {chunk_doc.chunk_index}")
+        # # STEP 8 — Print sample output
+        # for i, chunk_doc in enumerate(chunk_documents):
 
-            print(f"Embedding Model: {chunk_doc.embedding_model}")
+        #     print("\n====================")
+        #     print(f"Chunk {i + 1}")
+        #     print("====================")
 
-            print(f"Text:\n{chunk_doc.text[:300]}")
+        #     print(f"Chunk ID: {chunk_doc.chunk_id}")
 
-            print(f"Embedding Dimension: {len(embeddings[i])}")
+        #     print(f"Source File: {chunk_doc.source_file}")
 
-            print("====================\n")
+        #     print(f"Chunk Index: {chunk_doc.chunk_index}")
+
+        #     print(f"Embedding Model: {chunk_doc.embedding_model}")
+
+        #     print(f"Text:\n{chunk_doc.text[:300]}")
+
+        #     print(f"Embedding Dimension: {len(embeddings[i])}")
+
+        #     print("====================\n")
